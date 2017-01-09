@@ -15,7 +15,7 @@ class TemperatureLogger
     void ToSerial();
 
   protected:
-    static const unsigned int ms_MaxNumRecords = 1440;
+    static const unsigned int ms_MaxNumRecords = 1400;
 
     byte TemperatureToByte(float temperature);
     void AddRecord(float temperature);
