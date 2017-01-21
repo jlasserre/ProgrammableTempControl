@@ -2,7 +2,7 @@
 
 #include <Arduino.h>
 
-static const unsigned long RESET_DELAY = 50UL;
+
 
 class PushButton
 {

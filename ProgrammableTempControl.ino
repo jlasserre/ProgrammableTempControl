@@ -6,6 +6,7 @@
 #include "temperaturelogger.h"
 #include "pushbutton.h"
 #include "relaycontrol.h"
+#include "heatercontactsensor.h"
 
 #define LOW_TEMP_LIMIT 11.0f
 #define LOW_TEMP_HYSTERESIS 1.0f
@@ -31,6 +32,7 @@ PushButton buttonProgram(5);
 PushButton buttonUp(4);
 PushButton buttonDown(3);
 RelayControl relay(3, true);
+HeaterContactSensor contactSensor(A1, 4);
 
 
 // the setup routine runs once when you press reset:
@@ -39,6 +41,10 @@ void setup()
   tempLog.Reset();
   relay.Setup();
   relayButton.Setup();
+  buttonProgram.Setup();
+  buttonUp.Setup();
+  buttonDown.Setup();
+  contactSensor.Setup();
 
   lowTempFailsafeThermostat.SetDesiredTemp(LOW_TEMP_LIMIT);
   lowTempFailsafeThermostat.SetHysteresis(LOW_TEMP_HYSTERESIS);
@@ -72,6 +78,7 @@ void loop()
   buttonProgram.Update();
   buttonUp.Update();
   buttonDown.Update();
+  contactSensor.Update();
 
   //execute any logic after the updates
   HeatingState heatingState = HS_Normal_Off;
@@ -101,9 +108,9 @@ void loop()
   
   char displayString[17];
   char temperatureString[6];
-  char voltageString[6];
+  
 
-  dtostrf(thermostat.GetActualTriggerTemp(), 5, 1, temperatureString);
+  dtostrf(thermostat.GetActualTriggerTemp(), 4, 1, temperatureString);
 
   if (heatingState == HS_LowTempFailsafe_On)
   {
@@ -111,15 +118,18 @@ void loop()
   }
   else
   {
-    sprintf(displayString, "T:%s [%s]", temperatureString, thermostat.IsHeatingRequested()?"ON":"OFF");
+//    _|_|_|_|_|_|_|_|
+//    OFF/Want 21.0C
+//    20.5C / Closed
+    sprintf(displayString, "%s/ Want %sC", thermostat.IsHeatingRequested()?"ON ":"OFF", temperatureString);
   }
   
   lcd.setCursor(0,0);
   lcd.print(displayString);
   
-  dtostrf(temperature, 5, 1, temperatureString);
-  dtostrf(voltage, 4, 2, voltageString);
-  sprintf(displayString, "%s C (%s V)", temperatureString, voltageString);//fits EXACTLY in 16chars
+  dtostrf(temperature, 4, 1, temperatureString);
+  
+  sprintf(displayString, "%sC / %s", temperatureString, contactSensor.IsHeatingRequested()?"  Heat ":"No Heat");
   
   lcd.setCursor(0,1);
   lcd.print(displayString);

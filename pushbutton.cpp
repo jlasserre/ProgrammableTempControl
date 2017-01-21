@@ -1,5 +1,6 @@
 #include "pushbutton.h"
 
+static const unsigned long RESET_DELAY = 50UL;
 
 PushButton::PushButton(byte readPin, byte ledPin)
 :m_ReadPin(readPin),

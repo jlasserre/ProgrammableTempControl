@@ -1,6 +1,7 @@
 #include <Arduino.h>
 
 #define numHoursToLog 1UL
+
 class TemperatureLogger
 {
   public:
@@ -15,7 +16,7 @@ class TemperatureLogger
     void ToSerial();
 
   protected:
-    static const unsigned int ms_MaxNumRecords = 1400;
+    static const unsigned int ms_MaxNumRecords = 120;
 
     byte TemperatureToByte(float temperature);
     void AddRecord(float temperature);
